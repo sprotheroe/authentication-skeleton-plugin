@@ -31,7 +31,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.authentication.Constants.PLUGIN_IDENTIFIER;
-import static com.example.authentication.ExamplePlugin.LOG;
 import static com.example.authentication.GoRequest.GO_REQUEST_AUTHENTICATE_USER;
 import static com.thoughtworks.go.plugin.api.response.DefaultGoApiResponse.REDIRECT_RESPONSE_CODE;
 import static com.thoughtworks.go.plugin.api.response.DefaultGoApiResponse.VALIDATION_ERROR;
@@ -82,6 +81,5 @@ public class AuthenticationExecutor implements RequestExecutor {
         DefaultGoApiRequest authenticateUserRequest = new DefaultGoApiRequest(GO_REQUEST_AUTHENTICATE_USER.requestName(), "1.0", PLUGIN_IDENTIFIER);
         authenticateUserRequest.setRequestBody(GSON.toJson(userMap));
         GoApiResponse authenticateUserResponse = accessor.submit(authenticateUserRequest);
-        LOG.error("Authenticate user: " + authenticateUserResponse.responseCode());
     }
 }

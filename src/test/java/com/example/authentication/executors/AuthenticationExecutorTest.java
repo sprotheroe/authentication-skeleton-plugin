@@ -26,6 +26,7 @@ import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -43,20 +44,42 @@ public class AuthenticationExecutorTest {
     public void setup() {
         accessor = mock(GoApplicationAccessor.class);
         settings = mock(PluginSettings.class);
+        request = mock(GoPluginApiRequest.class);
+
         when(settings.getGoServerUrl()).thenReturn("https://your.go.server.url");
     }
 
     @Test
     public void shouldAuthenticateUser() throws Exception {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("username", "gocd");
+        requestParams.put("password", "password");
+        when(request.requestParameters()).thenReturn(requestParams);
+
         AuthenticationExecutor executor = spy(new AuthenticationExecutor(accessor, request, settings));
 
         GoPluginApiResponse response = executor.execute();
 
-        assertThat(response.responseCode(), is(200));
+        assertThat(response.responseCode(), is(302));
 
         verify(accessor, times(1)).submit(any(GoApiRequest.class));
-        verify(executor, times(1)).authenticateUser(new User("your-user", "GoCDAdmin", "admin@go"));
-        Map<String, String> responseData = GSON.fromJson(response.responseBody(), Map.class);
+        verify(executor, times(1)).authenticateUser(new User("gocd", "GoCDAdmin", "admin@go"));
+        Map<String, String> responseData = response.responseHeaders();
         assertThat(responseData, hasEntry("Location", settings.getGoServerUrl()));
+    }
+
+    @Test
+    public void shouldAuthenticateInvalidUser() throws Exception {
+        Map<String, String> requestParams = new HashMap<>();
+        requestParams.put("username", "unkown");
+        requestParams.put("password", "password");
+        when(request.requestParameters()).thenReturn(requestParams);
+
+        AuthenticationExecutor executor = spy(new AuthenticationExecutor(accessor, request, settings));
+        GoPluginApiResponse response = executor.execute();
+
+        assertThat(response.responseCode(), is(412));
+        verify(accessor, times(0)).submit(any(GoApiRequest.class));
+        verify(executor, times(0)).authenticateUser(new User("gocd", "GoCDAdmin", "admin@go"));
     }
 }
