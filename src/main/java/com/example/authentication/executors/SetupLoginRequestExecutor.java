@@ -22,15 +22,12 @@ import com.google.gson.Gson;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static com.thoughtworks.go.plugin.api.response.DefaultGoApiResponse.REDIRECT_RESPONSE_CODE;
 import static com.thoughtworks.go.plugin.api.response.DefaultGoApiResponse.SUCCESS_RESPONSE_CODE;
 
 public class SetupLoginRequestExecutor {
     public static final String CONTENT_TYPE = "Content-Type";
-    public static final String TEXT_HTML = "text/html";
+    public static final String TEXT_HTML = "text/html; charset=UTF-8";
     private static final Gson GSON = new Gson();
     private PluginSettings pluginSettings;
 
@@ -51,8 +48,8 @@ public class SetupLoginRequestExecutor {
     }
 
     GoPluginApiResponse sendRedirect() {
-        Map<String, String> response = new HashMap<String, String>();
-        response.put("Location", "your redirect URL");
-        return new DefaultGoPluginApiResponse(REDIRECT_RESPONSE_CODE, GSON.toJson(response));
+        DefaultGoPluginApiResponse response = new DefaultGoPluginApiResponse(REDIRECT_RESPONSE_CODE);
+        response.addResponseHeader("Location", "your redirect URL");
+        return response;
     }
 }

@@ -23,8 +23,6 @@ import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Map;
-
 import static com.example.authentication.executors.SetupLoginRequestExecutor.CONTENT_TYPE;
 import static com.example.authentication.executors.SetupLoginRequestExecutor.TEXT_HTML;
 import static org.hamcrest.Matchers.hasEntry;
@@ -62,8 +60,6 @@ public class SetupLoginRequestExecutorTest {
         }.execute();
 
         assertThat(response.responseCode(), is(302));
-
-        Map<String, String> responseJSON = GSON.fromJson(response.responseBody(), Map.class);
-        assertThat(responseJSON, hasEntry("Location", "your redirect URL"));
+        assertThat(response.responseHeaders(), hasEntry("Location", "your redirect URL"));
     }
 }
