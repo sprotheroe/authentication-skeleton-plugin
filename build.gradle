@@ -37,7 +37,6 @@ targetCompatibility = 1.7
 // In this section you declare where to find the dependencies of your project
 repositories {
     jcenter()
-    mavenCentral()
     mavenLocal()
 }
 
@@ -69,5 +68,10 @@ processResources {
 jar {
     from(configurations.compile) {
         into "lib/"
+    }
+
+//    This is useful for debugging
+    from(sourceSets.main.java) {
+        into "/"
     }
 }
