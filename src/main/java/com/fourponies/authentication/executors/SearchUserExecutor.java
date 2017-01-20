@@ -16,8 +16,10 @@
 
 package com.fourponies.authentication.executors;
 
+import com.fourponies.authentication.PluginSettings;
 import com.fourponies.authentication.RequestExecutor;
 import com.fourponies.authentication.domain.User;
+import com.fourponies.authentication.LdapClient;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -28,13 +30,17 @@ import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import java.util.List;
 import java.util.Map;
 
+import static com.fourponies.authentication.LdapStartTlsPlugin.LOG;
+
 public class SearchUserExecutor implements RequestExecutor {
     private static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
     private final GoPluginApiRequest request;
+    private final PluginSettings settings;
 
-    public SearchUserExecutor(GoPluginApiRequest request) {
+    public SearchUserExecutor(GoPluginApiRequest request, PluginSettings settings) {
         this.request = request;
+        this.settings = settings;
     }
 
     @Override
@@ -48,6 +54,7 @@ public class SearchUserExecutor implements RequestExecutor {
 
     //TODO: change this to your needs
     List<User> searchUsers(String searchTerm) {
-        return null;
+	LdapClient ldap = new LdapClient(settings);
+        return ldap.search(searchTerm);
     }
 }

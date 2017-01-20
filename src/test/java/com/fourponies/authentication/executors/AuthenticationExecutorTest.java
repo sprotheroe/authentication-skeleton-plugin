@@ -47,14 +47,13 @@ public class AuthenticationExecutorTest {
         request = mock(GoPluginApiRequest.class);
 
         when(settings.getGoServerUrl()).thenReturn("https://your.go.server.url");
+        when(settings.getLdapURL()).thenReturn("ldap://fp-squabble.fourponies.dev");
     }
 
     @Test
     public void shouldAuthenticateUser() throws Exception {
-        Map<String, String> requestParams = new HashMap<>();
-        requestParams.put("username", "gocd");
-        requestParams.put("password", "password");
-        when(request.requestParameters()).thenReturn(requestParams);
+        String requestBody = "{ 'username':'gocd', 'password':'password'}";
+        when(request.requestBody()).thenReturn(requestBody);
 
         AuthenticationExecutor executor = spy(new AuthenticationExecutor(accessor, request, settings));
 
@@ -70,10 +69,8 @@ public class AuthenticationExecutorTest {
 
     @Test
     public void shouldAuthenticateInvalidUser() throws Exception {
-        Map<String, String> requestParams = new HashMap<>();
-        requestParams.put("username", "unkown");
-        requestParams.put("password", "password");
-        when(request.requestParameters()).thenReturn(requestParams);
+        String requestBody = "{ 'username':'unkown', 'password':'password'}";
+        when(request.requestBody()).thenReturn(requestBody);
 
         AuthenticationExecutor executor = spy(new AuthenticationExecutor(accessor, request, settings));
         GoPluginApiResponse response = executor.execute();

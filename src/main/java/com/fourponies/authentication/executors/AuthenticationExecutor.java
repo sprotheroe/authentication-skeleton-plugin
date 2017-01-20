@@ -19,6 +19,7 @@ package com.fourponies.authentication.executors;
 import com.fourponies.authentication.PluginSettings;
 import com.fourponies.authentication.RequestExecutor;
 import com.fourponies.authentication.domain.User;
+import com.fourponies.authentication.LdapClient;
 import com.google.gson.Gson;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.request.DefaultGoApiRequest;
@@ -35,6 +36,8 @@ import static com.fourponies.authentication.GoRequest.GO_REQUEST_AUTHENTICATE_US
 import static com.thoughtworks.go.plugin.api.response.DefaultGoApiResponse.REDIRECT_RESPONSE_CODE;
 import static com.thoughtworks.go.plugin.api.response.DefaultGoApiResponse.VALIDATION_ERROR;
 
+import static com.fourponies.authentication.LdapStartTlsPlugin.LOG;
+
 public class AuthenticationExecutor implements RequestExecutor {
     public static final String LOCATION = "Location";
     private static final Gson GSON = new Gson();
@@ -50,29 +53,28 @@ public class AuthenticationExecutor implements RequestExecutor {
 
     @Override
     public GoPluginApiResponse execute() throws Exception {
+        DefaultGoPluginApiResponse response = null;
 
         User user = validateAndGetUser();
-
-        int responseCode = REDIRECT_RESPONSE_CODE;
         if (user != null) {
-            authenticateUser(user);
+            final Map<String, Object> userMap = new HashMap<String, Object>();
+            userMap.put("user", user);
+            response = new DefaultGoPluginApiResponse(200, GSON.toJson(userMap));
         } else {
-            responseCode = VALIDATION_ERROR;
+            response = new DefaultGoPluginApiResponse(VALIDATION_ERROR);
         }
-
-        DefaultGoPluginApiResponse response = new DefaultGoPluginApiResponse(responseCode);
-        response.addResponseHeader(LOCATION, settings.getGoServerUrl());
         return response;
     }
 
     //TODO: Validate and return user object
+    @SuppressWarnings("unchecked")
     private User validateAndGetUser() {
-        String username = request.requestParameters().get("username");
-        String password = request.requestParameters().get("password");
+        Map<String, String> credentialMap = GSON.fromJson(request.requestBody(), Map.class);
+        String username = credentialMap.get("username");
+        String password = credentialMap.get("password");
 
-        if ("gocd".equals(username) && "password".equals(password))
-            return new User(username, "GoCDAdmin", "admin@go");
-        return null;
+	LdapClient ldap = new LdapClient(settings);
+        return ldap.authenticate(username, password);
     }
 
     public void authenticateUser(User user) {

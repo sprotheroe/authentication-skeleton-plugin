@@ -23,7 +23,7 @@ public enum Request {
 
     // authentication related requests that the server makes to the plugin
     REQUEST_INDEX("index"),
-    REQUEST_AUTHENTICATE("go.authentication.authenticate-user"),
+    REQUEST_AUTHENTICATE_USER("go.authentication.authenticate-user"),
     REQUEST_SEARCH_USER("go.authentication.search-user"),
     REQUEST_AUTH_PLUGIN_CONFIGURATION("go.authentication.plugin-configuration"),
 

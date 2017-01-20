@@ -58,10 +58,10 @@ public class LdapStartTlsPlugin implements GoPlugin {
                     return new GetAuthPluginConfigurationExecutor().execute();
                 case REQUEST_INDEX:
                     return new SetupLoginRequestExecutor(pluginRequest.getPluginSettings()).execute();
-                case REQUEST_AUTHENTICATE:
+                case REQUEST_AUTHENTICATE_USER:
                     return new AuthenticationExecutor(accessor, request, pluginRequest.getPluginSettings()).execute();
                 case REQUEST_SEARCH_USER:
-                    return new SearchUserExecutor(request).execute();
+                    return new SearchUserExecutor(request, pluginRequest.getPluginSettings()).execute();
                 default:
                     throw new UnhandledRequestTypeException(request.requestName());
             }
