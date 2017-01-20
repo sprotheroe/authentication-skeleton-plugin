@@ -14,4 +14,11 @@
  * limitations under the License.
  */
 
-rootProject.name = 'gocd-ldap-starttls-authentication-plugin'
+package com.fourponies.authentication;
+
+import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+
+public interface RequestExecutor {
+
+    GoPluginApiResponse execute() throws Exception;
+}

@@ -16,23 +16,23 @@
 
 apply plugin: 'java'
 
-group = 'com.example.authentication.template'
+group = 'com.fourponies.authentication.ldap-starttls'
 version = '0.0.1'
 
 // these values that go into plugin.xml
 project.ext.pluginDesc = [
-        id         : 'com.example.authentication.template',
+        id         : 'com.fourponies.authentication.ldap-starttls',
         version    : project.version,
         goCdVersion: '16.2.1',
-        name       : 'Example Authentication Plugin for GoCD',
-        description: 'Some longer description of your plugin goes here',
+        name       : 'LDAP with STARTTLS Authentication Plugin for GoCD',
+        description: 'The built-in LDAP authentication in GoCD does not support LDAP servers with STARTTLS. This plugin just rectifies that.',
         vendorName : 'GoCD Contributors',
-        vendorUrl  : 'https://github.com/user/repository'
+        vendorUrl  : 'https://github.com/sprotheroe/gocd-ldap-starttls-authentication-plugin'
 ]
 
 // Force 1.7 compatibility to ensure that it works with older JVMs
-sourceCompatibility = 1.7
-targetCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -75,3 +75,12 @@ jar {
         into "/"
     }
 }
+
+compileJava {
+    options.compilerArgs << "-Xlint:unchecked"
+}
+
+compileTestJava {
+    options.compilerArgs << "-Xlint:unchecked"
+}
+
