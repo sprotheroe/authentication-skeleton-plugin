@@ -47,6 +47,36 @@ public class PluginSettings {
     @SerializedName("api_version")
     private String apiVersion;
 
+    // Parameters
+    @Expose
+    @SerializedName("ldap_url")
+    private String ldapURL;
+
+    @Expose
+    @SerializedName("starttls")
+    private String startTLS;
+
+    @Expose
+    @SerializedName("search_base")
+    private String searchBase;
+
+    @Expose
+    @SerializedName("manager_dn")
+    private String managerDN;
+
+    @Expose
+    @SerializedName("manager_password")
+    private String managerPassword;
+
+    @Expose
+    @SerializedName("search_filter")
+    private String searchFilter;
+
+    @Expose
+    @SerializedName("display_name_attribute")
+    private String displayNameAttribute;
+
+
     public static PluginSettings fromJSON(String json) {
         return GSON.fromJson(json, PluginSettings.class);
     }
@@ -69,5 +99,33 @@ public class PluginSettings {
 
     public String getApiVersion() {
         return apiVersion;
+    }
+
+    public String getLdapURL() {
+        return ldapURL;
+    }
+
+    public String getStartTLS() {
+        return startTLS;
+    }
+
+    public String getSearchBase() {
+        return searchBase;
+    }
+
+    public String getManagerDN() {
+        return managerDN;
+    }
+
+    public String getManagerPassword() {
+        return managerPassword;
+    }
+
+    public String getSearchFilter() {
+        return searchFilter;
+    }
+
+    public String getDisplayNameAttribute() {
+        return displayNameAttribute;
     }
 }

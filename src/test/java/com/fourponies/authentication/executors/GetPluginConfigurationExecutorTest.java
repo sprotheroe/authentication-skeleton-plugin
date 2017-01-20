@@ -45,11 +45,53 @@ public class GetPluginConfigurationExecutorTest {
 
         assertThat(response.responseCode(), CoreMatchers.is(200));
         String expectedJSON = "{\n" +
+                "  \"ldap_url\": {\n" +
+                "    \"display-name\": \"LDAP Server URL\",\n" +
+                "    \"required\": true,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"0\"\n" +
+                "  },\n" +
+                "  \"starttls\": {\n" +
+                "    \"display-name\": \"Start TLS\",\n" +
+                "    \"required\": true,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"1\"\n" +
+                "  },\n" +
+                "  \"search_base\": {\n" +
+                "    \"display-name\": \"Search Base\",\n" +
+                "    \"required\": true,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"2\"\n" +
+                "  },\n" +
+                "  \"manager_dn\": {\n" +
+                "    \"display-name\": \"Manager DN\",\n" +
+                "    \"required\": true,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"3\"\n" +
+                "  },\n" +
+                "  \"manager_password\": {\n" +
+                "    \"display-name\": \"Manager Password\",\n" +
+                "    \"required\": true,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"4\"\n" +
+                "  },\n" +
+                "  \"search_filter\": {\n" +
+                "    \"display-name\": \"Search Filter\",\n" +
+                "    \"required\": true,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"5\"\n" +
+                "  },\n" +
+                "  \"display_name_attribute\": {\n" +
+                "    \"display-name\": \"Display Name Attribute\",\n" +
+                "    \"required\": true,\n" +
+                "    \"secure\": false,\n" +
+                "    \"display-order\": \"6\"\n" +
+                "  },\n" +
                 "  \"go_server_url\": {\n" +
                 "    \"display-name\": \"Go Server URL\",\n" +
                 "    \"required\": true,\n" +
                 "    \"secure\": false,\n" +
-                "    \"display-order\": \"0\"\n" +
+                "    \"display-order\": \"7\"\n" +
                 "  }\n" +
                 "}";
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);

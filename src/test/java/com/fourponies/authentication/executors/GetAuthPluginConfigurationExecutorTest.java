@@ -32,10 +32,11 @@ public class GetAuthPluginConfigurationExecutorTest {
 
         assertThat(response.responseCode(), CoreMatchers.is(200));
         String expectedJSON = "{" +
-                "\"display-name\":\"GoCD auth skeleton plugins\"," +
+                "\"display-name\":\"LDAP Authentication with Start TLS\"," +
                 "\"display-image-url\":\"https://raw.githubusercontent.com/gocd-contrib/authentication-skeleton-plugin/master/src/main/resources/gocd_72_72_icon.png\"," +
                 "\"supports-password-based-authentication\":true," +
-                "\"supports-web-based-authentication\":true" +
+                "\"supports-user-search\":true," +
+                "\"supports-web-based-authentication\":false" +
                 "}";
 
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);

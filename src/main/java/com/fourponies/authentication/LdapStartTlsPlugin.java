@@ -45,6 +45,7 @@ public class LdapStartTlsPlugin implements GoPlugin {
 
     @Override
     public GoPluginApiResponse handle(GoPluginApiRequest request) throws UnhandledRequestTypeException {
+	LOG.debug("request '" + request.requestName() + "'");
         try {
             switch (Request.fromString(request.requestName())) {
                 case PLUGIN_SETTINGS_GET_CONFIGURATION:

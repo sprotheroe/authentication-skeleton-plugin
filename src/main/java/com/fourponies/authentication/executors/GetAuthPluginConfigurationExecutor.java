@@ -39,10 +39,11 @@ public class GetAuthPluginConfigurationExecutor {
     //TODO: change this to your needs
     Map<String, Object> getConfiguration() {
         Map<String, Object> configuration = new HashMap<String, Object>();
-        configuration.put("display-name", "GoCD auth skeleton plugins");
+        configuration.put("display-name", "LDAP Authentication with Start TLS");
         configuration.put("display-image-url", "https://raw.githubusercontent.com/gocd-contrib/authentication-skeleton-plugin/master/src/main/resources/gocd_72_72_icon.png");
-        configuration.put("supports-web-based-authentication", true);
+        configuration.put("supports-web-based-authentication", false);
         configuration.put("supports-password-based-authentication", true);
+        configuration.put("supports-user-search", true);
         return configuration;
     }
 }
