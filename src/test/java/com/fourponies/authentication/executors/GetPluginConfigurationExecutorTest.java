@@ -16,9 +16,13 @@
 
 package com.fourponies.authentication.executors;
 
+import com.fourponies.authentication.PluginSettings;
+import com.fourponies.authentication.SettingsPrimer;
+
 import com.google.gson.Gson;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.hamcrest.CoreMatchers;
+import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
@@ -26,23 +30,34 @@ import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
 
 public class GetPluginConfigurationExecutorTest {
 
+    private SettingsPrimer settingsPrimer;
+    private PluginSettings pluginSettings;
+
+    @Before
+    public void setup() {
+        pluginSettings = new PluginSettings();
+        settingsPrimer = mock(SettingsPrimer.class);
+        when(settingsPrimer.load()).thenReturn(pluginSettings);
+    }
+
     @Test
     public void shouldSerializeAllFields() throws Exception {
-        GoPluginApiResponse response = new GetPluginConfigurationExecutor().execute();
+        GetPluginConfigurationExecutor executor = new GetPluginConfigurationExecutor(settingsPrimer);
+        GoPluginApiResponse response = executor.execute();
         HashMap hashMap = new Gson().fromJson(response.responseBody(), HashMap.class);
         assertEquals("Are you using anonymous inner classes — see https://github.com/google/gson/issues/298",
                 hashMap.size(),
-                GetPluginConfigurationExecutor.FIELDS.size()
+                executor.fieldMap().size()
         );
     }
 
     @Test
     public void assertJsonStructure() throws Exception {
-        GoPluginApiResponse response = new GetPluginConfigurationExecutor().execute();
-
+        GoPluginApiResponse response = new GetPluginConfigurationExecutor(settingsPrimer).execute();
         assertThat(response.responseCode(), CoreMatchers.is(200));
         String expectedJSON = "{\n" +
                 "  \"ldap_url\": {\n" +
@@ -95,6 +110,5 @@ public class GetPluginConfigurationExecutorTest {
                 "  }\n" +
                 "}";
         JSONAssert.assertEquals(expectedJSON, response.responseBody(), true);
-
     }
 }

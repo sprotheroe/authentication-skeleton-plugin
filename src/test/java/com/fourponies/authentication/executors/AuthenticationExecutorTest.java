@@ -16,9 +16,10 @@
 
 package com.fourponies.authentication.executors;
 
-import com.fourponies.authentication.PluginSettings;
+import com.fourponies.authentication.LdapClient;
 import com.fourponies.authentication.domain.User;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.request.GoApiRequest;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
@@ -26,28 +27,32 @@ import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.HashMap;
+import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class AuthenticationExecutorTest {
     private Gson GSON = new Gson();
     private GoApplicationAccessor accessor;
     private GoPluginApiRequest request;
-    private PluginSettings settings;
+    private LdapClient ldapClient;
+    private User user;
 
     @Before
     public void setup() {
         accessor = mock(GoApplicationAccessor.class);
-        settings = mock(PluginSettings.class);
+        ldapClient = mock(LdapClient.class);
         request = mock(GoPluginApiRequest.class);
+        user = new User("your-user-name", "GoCDAdmin", "go@go.com");
 
-        when(settings.getGoServerUrl()).thenReturn("https://your.go.server.url");
-        when(settings.getLdapURL()).thenReturn("ldap://fp-squabble.fourponies.dev");
+        when(ldapClient.authenticate("gocd","password")).thenReturn(user);
+        when(ldapClient.authenticate("unkown","password")).thenReturn(null);
     }
 
     @Test
@@ -55,16 +60,19 @@ public class AuthenticationExecutorTest {
         String requestBody = "{ 'username':'gocd', 'password':'password'}";
         when(request.requestBody()).thenReturn(requestBody);
 
-        AuthenticationExecutor executor = spy(new AuthenticationExecutor(accessor, request, settings));
+        AuthenticationExecutor executor = spy(new AuthenticationExecutor(accessor, request, ldapClient));
 
         GoPluginApiResponse response = executor.execute();
 
-        assertThat(response.responseCode(), is(302));
+        assertThat(response.responseCode(), is(200));
 
-        verify(accessor, times(1)).submit(any(GoApiRequest.class));
-        verify(executor, times(1)).authenticateUser(new User("gocd", "GoCDAdmin", "admin@go"));
-        Map<String, String> responseData = response.responseHeaders();
-        assertThat(responseData, hasEntry("Location", settings.getGoServerUrl()));
+        Type mapType = new TypeToken<Map<String,User>>() {
+        }.getType();
+
+        Map<String, User> map = GSON.fromJson(response.responseBody(), mapType);
+
+        User testUser = map.get("user");
+        assertEquals(testUser, user);
     }
 
     @Test
@@ -72,11 +80,9 @@ public class AuthenticationExecutorTest {
         String requestBody = "{ 'username':'unkown', 'password':'password'}";
         when(request.requestBody()).thenReturn(requestBody);
 
-        AuthenticationExecutor executor = spy(new AuthenticationExecutor(accessor, request, settings));
+        AuthenticationExecutor executor = spy(new AuthenticationExecutor(accessor, request, ldapClient));
         GoPluginApiResponse response = executor.execute();
 
-        assertThat(response.responseCode(), is(412));
-        verify(accessor, times(0)).submit(any(GoApiRequest.class));
-        verify(executor, times(0)).authenticateUser(new User("gocd", "GoCDAdmin", "admin@go"));
+        assertThat(response.responseCode(), is(412)); // Validation error
     }
 }

@@ -17,18 +17,38 @@
 package com.fourponies.authentication.executors;
 
 import com.fourponies.authentication.requests.ValidatePluginSettings;
+import com.fourponies.authentication.PluginSettings;
+import com.fourponies.authentication.SettingsPrimer;
+
+import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
 
 public class ValidateConfigurationExecutorTest {
+
+    private GoPluginApiRequest request;
+    private PluginSettings pluginSettings;
+    private SettingsPrimer settingsPrimer;
+
+    @Before
+    public void setup() {
+        request = mock(GoPluginApiRequest.class);
+        pluginSettings = new PluginSettings();
+        settingsPrimer = mock(SettingsPrimer.class);
+        when(settingsPrimer.load()).thenReturn(pluginSettings);
+    }
+
     @Test
     public void shouldValidateABadConfiguration() throws Exception {
-        ValidatePluginSettings settings = new ValidatePluginSettings();
-        GoPluginApiResponse response = new ValidateConfigurationExecutor(settings).execute();
+        String requestBody = "";
+        when(request.requestBody()).thenReturn(requestBody);
+        GoPluginApiResponse response = new ValidateConfigurationExecutor(request, settingsPrimer).execute();
 
         assertThat(response.responseCode(), is(200));
         JSONAssert.assertEquals("[\n" +
@@ -69,16 +89,19 @@ public class ValidateConfigurationExecutorTest {
 
     @Test
     public void shouldValidateAGoodConfiguration() throws Exception {
-        ValidatePluginSettings settings = new ValidatePluginSettings();
-        settings.put("ldap_url", "ldap://ldap.example.com");
-        settings.put("starttls", "1");
-        settings.put("search_base", "https://ci.example.com");
-        settings.put("manager_dn", "cn=admin,dc=example,dc=com");
-        settings.put("manager_password", "secretPassw0rd");
-        settings.put("search_filter", "https://ci.example.com");
-        settings.put("display_name_attribute", "fred");
-        settings.put("go_server_url", "https://ci.example.com");
-        GoPluginApiResponse response = new ValidateConfigurationExecutor(settings).execute();
+        String requestBody = "{ \"plugin-settings\": {" +
+            "\"ldap_url\": { \"value\": \"ldap://ldap.example.com\" }, " + 
+            "\"starttls\": { \"value\": \"yes\" }, " + 
+            "\"search_base\": { \"value\": \"ldap://ldap.example.com\" }, " + 
+            "\"manager_dn\": { \"value\": \"ou=people,dc=example,dc=com\" }, " + 
+            "\"manager_password\": { \"value\": \"secretPassw0rd\" }, " + 
+            "\"search_filter\": { \"value\": \"(ou=people)\" }, " + 
+            "\"display_name_attribute\": { \"value\": \"cn\" }, " + 
+            "\"go_server_url\": { \"value\": \"https://go.example.com\" } " + 
+            "} }";
+
+        when(request.requestBody()).thenReturn(requestBody);
+        GoPluginApiResponse response = new ValidateConfigurationExecutor(request, settingsPrimer).execute();
 
         assertThat(response.responseCode(), is(200));
         JSONAssert.assertEquals("[]", response.responseBody(), true);

@@ -16,7 +16,6 @@
 
 package com.fourponies.authentication.executors;
 
-import com.fourponies.authentication.PluginSettings;
 import com.fourponies.authentication.RequestExecutor;
 import com.fourponies.authentication.domain.User;
 import com.fourponies.authentication.LdapClient;
@@ -42,13 +41,13 @@ public class AuthenticationExecutor implements RequestExecutor {
     public static final String LOCATION = "Location";
     private static final Gson GSON = new Gson();
     private final GoPluginApiRequest request;
-    private final PluginSettings settings;
+    private final LdapClient ldapClient;
     private GoApplicationAccessor accessor;
 
-    public AuthenticationExecutor(GoApplicationAccessor accessor, GoPluginApiRequest request, PluginSettings settings) {
+    public AuthenticationExecutor(GoApplicationAccessor accessor, GoPluginApiRequest request, LdapClient ldapClient) {
         this.accessor = accessor;
         this.request = request;
-        this.settings = settings;
+        this.ldapClient = ldapClient;
     }
 
     @Override
@@ -73,8 +72,7 @@ public class AuthenticationExecutor implements RequestExecutor {
         String username = credentialMap.get("username");
         String password = credentialMap.get("password");
 
-	LdapClient ldap = new LdapClient(settings);
-        return ldap.authenticate(username, password);
+        return ldapClient.authenticate(username, password);
     }
 
     public void authenticateUser(User user) {

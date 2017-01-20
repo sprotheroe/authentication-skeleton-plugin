@@ -16,44 +16,53 @@
 
 package com.fourponies.authentication.executors;
 
+import com.fourponies.authentication.PluginSettings;
+import com.fourponies.authentication.SettingsPrimer;
 import com.fourponies.authentication.RequestExecutor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.thoughtworks.go.plugin.api.response.DefaultGoPluginApiResponse;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static com.fourponies.authentication.LdapStartTlsPlugin.LOG;
 
 /*
  * TODO: add any additional configuration fields here.
  */
 public class GetPluginConfigurationExecutor implements RequestExecutor {
-    public static final Field LDAP_URL = new NonBlankField("ldap_url", "LDAP Server URL", null, false, "0");
-    public static final Field STARTTLS = new NonBlankField("starttls", "Start TLS", null, false, "1");
-    public static final Field SEARCH_BASE = new NonBlankField("search_base", "Search Base", null, false, "2");
-    public static final Field MANAGER_DN = new NonBlankField("manager_dn", "Manager DN", null, false, "3");
-    public static final Field MANAGER_PASSWORD = new NonBlankField("manager_password", "Manager Password", null, false, "4");
-    public static final Field SEARCH_FILTER = new NonBlankField("search_filter", "Search Filter", null, false, "5");
-    public static final Field DISPLAY_NAME_ATTRIBUTE = new NonBlankField("display_name_attribute", "Display Name Attribute", null, false, "6");
-    public static final Field GO_SERVER_URL = new NonBlankField("go_server_url", "Go Server URL", null, false, "7");
 
-
-    public static final Map<String, Field> FIELDS = new LinkedHashMap<>();
     private static final Gson GSON = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
+    private final SettingsPrimer settingsPrimer;
 
-    static {
-        FIELDS.put(LDAP_URL.key(), LDAP_URL);
-        FIELDS.put(STARTTLS.key(), STARTTLS);
-        FIELDS.put(SEARCH_BASE.key(), SEARCH_BASE);
-        FIELDS.put(MANAGER_DN.key(), MANAGER_DN);
-        FIELDS.put(MANAGER_PASSWORD.key(), MANAGER_PASSWORD);
-        FIELDS.put(SEARCH_FILTER.key(), SEARCH_FILTER);
-        FIELDS.put(DISPLAY_NAME_ATTRIBUTE.key(), DISPLAY_NAME_ATTRIBUTE);
-        FIELDS.put(GO_SERVER_URL.key(), GO_SERVER_URL);
+    public GetPluginConfigurationExecutor(SettingsPrimer settingsPrimer) {
+        this.settingsPrimer = settingsPrimer;
+    }
+
+    public Map<String, Field> fieldMap() {
+        PluginSettings settings = settingsPrimer.load();
+
+	ArrayList<Field> fields = new ArrayList<Field>();
+        fields.add(new NonBlankField("ldap_url", "LDAP Server URL", settings.getLdapURL(), false, "0"));
+        fields.add(new NonBlankField("starttls", "Start TLS", settings.getStartTLS(), false, "1"));
+        fields.add(new NonBlankField("search_base", "Search Base", settings.getSearchBase(), false, "2"));
+        fields.add(new NonBlankField("manager_dn", "Manager DN", settings.getManagerDN(), false, "3"));
+        fields.add(new NonBlankField("manager_password", "Manager Password", settings.getManagerPassword(), false, "4"));
+        fields.add(new NonBlankField("search_filter", "Search Filter", settings.getSearchFilter(), false, "5"));
+        fields.add(new NonBlankField("display_name_attribute", "Display Name Attribute", settings.getDisplayNameAttribute(), false, "6"));
+        fields.add(new NonBlankField("go_server_url", "Go Server URL", settings.getGoServerUrl(), false, "7"));
+
+	Map<String, Field> fieldMap = new LinkedHashMap<>();
+	for (Field field : fields) {
+            fieldMap.put(field.key(), field);
+        }
+        return fieldMap;
     }
 
     public GoPluginApiResponse execute() {
-        return new DefaultGoPluginApiResponse(200, GSON.toJson(FIELDS));
+        return new DefaultGoPluginApiResponse(200, GSON.toJson(fieldMap()));
     }
 }

@@ -35,3 +35,27 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ```
+
+
+TODO
+Sort out repository - user, history, fork etc.
+Fix tests - use mock or DI for actual LDAP auth
+
+Add tests for SettingsPrimer etc.
+Tidy up logging
+Remove go-server-url config item
+Remove web UI for login
+Store config on save, restore on initial load (if present etc.)
+
+Then...
+Make iptables persistent
+Automate deployment via ansible
+Test, test, test
+Deploy to production server (with LE in test mode to start with?)
+
+Re-deploy headlice with stronger passwords etc.
+Tighten security on headlice
+
+Test with agents
+Deploy agent automatically
+Deploy rails project via git push etc. etc.

@@ -18,6 +18,7 @@ package com.fourponies.authentication;
 
 import com.fourponies.authentication.executors.*;
 import com.fourponies.authentication.requests.ValidatePluginSettings;
+import com.fourponies.authentication.LdapClient;
 import com.thoughtworks.go.plugin.api.GoApplicationAccessor;
 import com.thoughtworks.go.plugin.api.GoPlugin;
 import com.thoughtworks.go.plugin.api.GoPluginIdentifier;
@@ -49,9 +50,9 @@ public class LdapStartTlsPlugin implements GoPlugin {
         try {
             switch (Request.fromString(request.requestName())) {
                 case PLUGIN_SETTINGS_GET_CONFIGURATION:
-                    return new GetPluginConfigurationExecutor().execute();
+                    return new GetPluginConfigurationExecutor(new SettingsPrimer()).execute();
                 case PLUGIN_SETTINGS_VALIDATE_CONFIGURATION:
-                    return ValidatePluginSettings.fromJSON(request.requestBody()).executor().execute();
+                    return new ValidateConfigurationExecutor(request, new SettingsPrimer()).execute();
                 case PLUGIN_SETTINGS_GET_VIEW:
                     return new GetViewRequestExecutor().execute();
                 case REQUEST_AUTH_PLUGIN_CONFIGURATION:
@@ -59,9 +60,9 @@ public class LdapStartTlsPlugin implements GoPlugin {
                 case REQUEST_INDEX:
                     return new SetupLoginRequestExecutor(pluginRequest.getPluginSettings()).execute();
                 case REQUEST_AUTHENTICATE_USER:
-                    return new AuthenticationExecutor(accessor, request, pluginRequest.getPluginSettings()).execute();
+                    return new AuthenticationExecutor(accessor, request, new LdapClient(pluginRequest.getPluginSettings())).execute();
                 case REQUEST_SEARCH_USER:
-                    return new SearchUserExecutor(request, pluginRequest.getPluginSettings()).execute();
+                    return new SearchUserExecutor(request, new LdapClient(pluginRequest.getPluginSettings())).execute();
                 default:
                     throw new UnhandledRequestTypeException(request.requestName());
             }

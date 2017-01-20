@@ -16,9 +16,12 @@
 
 package com.fourponies.authentication.executors;
 
+import com.fourponies.authentication.PluginSettings;
+import com.fourponies.authentication.SettingsPrimer;
 import com.fourponies.authentication.utils.Util;
 import com.google.gson.Gson;
 import com.thoughtworks.go.plugin.api.response.GoPluginApiResponse;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -26,8 +29,19 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
 
 public class GetViewRequestExecutorTest {
+
+    private PluginSettings pluginSettings;
+    private SettingsPrimer settingsPrimer;
+
+    @Before
+    public void setup() {
+        pluginSettings = new PluginSettings();
+        settingsPrimer = mock(SettingsPrimer.class);
+        when(settingsPrimer.load()).thenReturn(pluginSettings);
+    }
 
     @Test
     @SuppressWarnings("unchecked")
@@ -41,8 +55,9 @@ public class GetViewRequestExecutorTest {
     @Test
     public void allFieldsShouldBePresentInView() throws Exception {
         String template = Util.readResource("/plugin-settings.template.html");
+        GetPluginConfigurationExecutor pluginConfigExecutor = new GetPluginConfigurationExecutor(settingsPrimer);
 
-        for (Map.Entry<String, Field> fieldEntry : GetPluginConfigurationExecutor.FIELDS.entrySet()) {
+        for (Map.Entry<String, Field> fieldEntry : pluginConfigExecutor.fieldMap().entrySet()) {
             assertThat(template, containsString("ng-model=\"" + fieldEntry.getKey() + "\""));
             assertThat(template, containsString("<span class=\"form_error\" ng-show=\"GOINPUTNAME[" + fieldEntry.getKey() +
                     "].$error.server\">{{GOINPUTNAME[" + fieldEntry.getKey() +

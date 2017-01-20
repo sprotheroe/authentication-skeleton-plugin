@@ -17,6 +17,7 @@
 package com.fourponies.authentication.executors;
 
 import com.fourponies.authentication.domain.User;
+import com.fourponies.authentication.LdapClient;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.thoughtworks.go.plugin.api.request.GoPluginApiRequest;
@@ -36,20 +37,21 @@ import static org.mockito.Mockito.*;
 public class SearchUserExecutorTest {
     private Gson GSON = new Gson();
     private GoPluginApiRequest request;
+    private LdapClient ldapClient;
     private User user;
-
 
     @Before
     public void setup() {
         request = mock(GoPluginApiRequest.class);
+        ldapClient = mock(LdapClient.class);
         user = new User("your-user-name", "GoCDAdmin", "go@go.com");
         when(request.requestBody()).thenReturn("{\"search-term\": \"your-user-name\"}");
+        when(ldapClient.search(anyString())).thenReturn(Collections.singletonList(user));
     }
 
     @Test
     public void shouldAbleToSearchUser() throws Exception {
-        SearchUserExecutor executor = spy(new SearchUserExecutor(request));
-        when(executor.searchUsers(anyString())).thenReturn(Collections.singletonList(user));
+        SearchUserExecutor executor = spy(new SearchUserExecutor(request, ldapClient));
 
         GoPluginApiResponse response = executor.execute();
 

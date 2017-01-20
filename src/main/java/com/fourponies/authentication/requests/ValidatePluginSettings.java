@@ -32,6 +32,20 @@ public class ValidatePluginSettings extends HashMap<String, String> {
     public static ValidatePluginSettings fromJSON(String json) {
         ValidatePluginSettings result = new ValidatePluginSettings();
 
+
+System.out.println("****************************************************************************************");
+System.out.println("****************************************************************************************");
+System.out.println("****************************************************************************************");
+System.out.println(json);
+System.out.println("****************************************************************************************");
+System.out.println("****************************************************************************************");
+System.out.println("****************************************************************************************");
+HashMap hm = GSON.fromJson(json, HashMap.class);
+System.out.println(hm);
+System.out.println("****************************************************************************************");
+System.out.println("****************************************************************************************");
+System.out.println("****************************************************************************************");
+
         Map<String, Map<String, String>> settings = (Map<String, Map<String, String>>) GSON.fromJson(json, HashMap.class).get("plugin-settings");
 
         for (Map.Entry<String, Map<String, String>> entry : settings.entrySet()) {
@@ -39,9 +53,5 @@ public class ValidatePluginSettings extends HashMap<String, String> {
         }
 
         return result;
-    }
-
-    public RequestExecutor executor() {
-        return new ValidateConfigurationExecutor(this);
     }
 }

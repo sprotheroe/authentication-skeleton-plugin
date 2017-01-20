@@ -16,7 +16,6 @@
 
 package com.fourponies.authentication.executors;
 
-import com.fourponies.authentication.PluginSettings;
 import com.fourponies.authentication.RequestExecutor;
 import com.fourponies.authentication.domain.User;
 import com.fourponies.authentication.LdapClient;
@@ -36,11 +35,11 @@ public class SearchUserExecutor implements RequestExecutor {
     private static final Gson GSON = new GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES).create();
 
     private final GoPluginApiRequest request;
-    private final PluginSettings settings;
+    private final LdapClient ldapClient;
 
-    public SearchUserExecutor(GoPluginApiRequest request, PluginSettings settings) {
+    public SearchUserExecutor(GoPluginApiRequest request, LdapClient ldapClient) {
         this.request = request;
-        this.settings = settings;
+        this.ldapClient = ldapClient;
     }
 
     @Override
@@ -48,13 +47,7 @@ public class SearchUserExecutor implements RequestExecutor {
     public GoPluginApiResponse execute() throws Exception {
         Map<String, String> requestParam = GSON.fromJson(request.requestBody(), Map.class);
         String searchTerm = requestParam.get("search-term");
-
-        return new DefaultGoPluginApiResponse(200, GSON.toJson(searchUsers(searchTerm)));
-    }
-
-    //TODO: change this to your needs
-    List<User> searchUsers(String searchTerm) {
-	LdapClient ldap = new LdapClient(settings);
-        return ldap.search(searchTerm);
+	List<User> users = ldapClient.search(searchTerm);
+        return new DefaultGoPluginApiResponse(200, GSON.toJson(users));
     }
 }

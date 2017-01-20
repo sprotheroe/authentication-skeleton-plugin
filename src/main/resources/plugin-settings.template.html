@@ -20,42 +20,47 @@ Ensure that the keys you use are also declared in the GetPluginConfigurationExec
 TODO: change this to your needs
 -->
 <div class="form_item_block">
-    <label>Go Server URL:<span class='asterix'>*</span></label>
+    <label>Go Server URL<span class='asterix'>*</span></label>
     <input type="text" ng-model="go_server_url" ng-required="true"/>
     <span class="form_error" ng-show="GOINPUTNAME[go_server_url].$error.server">{{GOINPUTNAME[go_server_url].$error.server}}</span>
 </div>
 <div class="form_item_block">
-    <label>LDAP Server URL:<span class='asterix'>*</span></label>
+    <label>LDAP Server URL<span class='asterix'>*</span></label>
     <input type="text" ng-model="ldap_url" ng-required="true"/>
     <span class="form_error" ng-show="GOINPUTNAME[ldap_url].$error.server">{{GOINPUTNAME[ldap_url].$error.server}}</span>
 </div>
 <div class="form_item_block">
-    <label>Start TLS:<span class='asterix'>*</span></label>
-    <input type="text" ng-model="starttls" ng-required="true"/>
-    <span class="form_error" ng-show="GOINPUTNAME[starttls].$error.server">{{GOINPUTNAME[starttls].$error.server}}</span>
+    <label>Start TLS?</label>
+    <div class="checkbox_row">
+        <input id="startTlsYes" type="radio" ng-model="starttls" value="yes"/> 
+        <label for="startTlsYes">Yes</label>
+        <input id="startTlsNo" type="radio" ng-model="starttls" value="no"/> 
+        <label for="startTlsNo">No</label>
+        <span class="form_error" ng-show="GOINPUTNAME[starttls].$error.server">{{GOINPUTNAME[starttls].$error.server}}</span>
+    </div>
 </div>
 <div class="form_item_block">
-    <label>Search Base:<span class='asterix'>*</span></label>
+    <label>Search Base<span class='asterix'>*</span></label>
     <input type="text" ng-model="search_base" ng-required="true"/>
     <span class="form_error" ng-show="GOINPUTNAME[search_base].$error.server">{{GOINPUTNAME[search_base].$error.server}}</span>
 </div>
 <div class="form_item_block">
-    <label>Manager DN:<span class='asterix'>*</span></label>
+    <label>Manager DN<span class='asterix'>*</span></label>
     <input type="text" ng-model="manager_dn" ng-required="true"/>
     <span class="form_error" ng-show="GOINPUTNAME[manager_dn].$error.server">{{GOINPUTNAME[manager_dn].$error.server}}</span>
 </div>
 <div class="form_item_block">
-    <label>Manager Password:<span class='asterix'>*</span></label>
-    <input type="text" ng-model="manager_password" ng-required="true"/>
+    <label>Manager Password<span class='asterix'>*</span></label>
+    <input type="password" ng-model="manager_password" ng-required="true"/>
     <span class="form_error" ng-show="GOINPUTNAME[manager_password].$error.server">{{GOINPUTNAME[manager_password].$error.server}}</span>
 </div>
 <div class="form_item_block">
-    <label>Search Filter:<span class='asterix'>*</span></label>
+    <label>Search Filter<span class='asterix'>*</span></label>
     <input type="text" ng-model="search_filter" ng-required="true"/>
     <span class="form_error" ng-show="GOINPUTNAME[search_filter].$error.server">{{GOINPUTNAME[search_filter].$error.server}}</span>
 </div>
 <div class="form_item_block">
-    <label>Display Name Attribute:<span class='asterix'>*</span></label>
+    <label>Display Name Attribute<span class='asterix'>*</span></label>
     <input type="text" ng-model="display_name_attribute" ng-required="true"/>
     <span class="form_error" ng-show="GOINPUTNAME[display_name_attribute].$error.server">{{GOINPUTNAME[display_name_attribute].$error.server}}</span>
 </div>
